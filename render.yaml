@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: jackpot-best
+    runtime: static
+    buildCommand: sh build-render.sh
+    staticPublishPath: ./dist
+    autoDeployTrigger: commit
+    routes:
+      - type: redirect
+        source: /city
+        destination: /city/
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+

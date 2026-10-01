@@ -1,0 +1,1171 @@
+<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jackpotcity | Canada</title><style>html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#050505}*{box-sizing:border-box}</style></head><body><!-- Jackpotcity · Back4App wheel · /city -->
+<style>
+  .page.container-fluid {
+    padding: 0!important;
+  }
+
+  .container {
+    width: 100%!important;
+  }
+</style>
+
+<script type="text/javascript">
+  const cut = "Bonus";
+  const adjustCfc = 0.42;
+  const CONFIG = (() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const DEFAULTS = {
+      lang: "fr",
+      brand: "jackpotcity",
+      offerBase: "https://vnhh8.com/7t3pRf3M",
+      sendTo: "AW-18141924080/XY1tCKGeuvMcEPCV38pD",
+      b1: "100 TG",
+      b2: "50 TG"
+    };
+
+    const LANDING_CONFIG_PARAMS = new Set([
+      "lang",
+      "brand",
+      "b1",
+      "b2",
+      "send_to",
+      "tg",
+      "offer",
+    ]);
+
+    function getParam(name, fallback = "") {
+      const value = params.get(name);
+      if (value === null) return fallback;
+      const trimmed = value.trim();
+      return trimmed === "" ? fallback : trimmed;
+    }
+
+    function isValidTrackingTarget(value) {
+      return /^AW-\d+\/[A-Za-z0-9_-]+$/.test(value);
+    }
+
+    function getTrackingTarget(fallback) {
+      const validTargets = params
+        .getAll("tg")
+        .map((value) => value.trim())
+        .filter(isValidTrackingTarget);
+
+      // If tg was appended more than once, the newest valid value wins.
+      return validTargets[validTargets.length - 1] || fallback;
+    }
+
+    function splitBonusParam(raw, fallbackLeft = "", fallbackRight = "") {
+      if (!raw || !raw.trim()) {
+        return {
+          top: fallbackLeft,
+          bottom: fallbackRight,
+        };
+      }
+
+      const normalized = raw.trim().replace(/\+/g, " ");
+      const parts = normalized.split(/\s+/).filter(Boolean);
+
+      return {
+        top: parts[0] ?? fallbackLeft,
+        bottom: parts.slice(1).join(" ") || fallbackRight,
+      };
+    }
+
+    function getBonusFallbackParts(raw) {
+      const normalized = raw.trim().split(/\s+/).filter(Boolean);
+
+      return {
+        top: normalized[0] ?? "",
+        bottom: normalized.slice(1).join(" "),
+      };
+    }
+
+    function buildOfferUrl(baseUrl) {
+      let result = baseUrl + "?&";
+      result += "se_referrer=" + encodeURIComponent(document.referrer);
+      result += "&default_keyword=" + encodeURIComponent(document.title);
+
+      for (const [key, value] of params.entries()) {
+        if (LANDING_CONFIG_PARAMS.has(key)) {
+          continue;
+        }
+
+        result +=
+          "&" + encodeURIComponent(key) + "=" + encodeURIComponent(value);
+      }
+
+      return result;
+    }
+
+    const lang = getParam("lang", DEFAULTS.lang);
+    const brand = getParam("brand", DEFAULTS.brand);
+    const offerBase = getParam("offer", DEFAULTS.offerBase);
+    const trackingTarget = getTrackingTarget(DEFAULTS.sendTo);
+
+    const bonus1Raw = getParam("b1", DEFAULTS.b1);
+    const bonus2Raw = getParam("b2", DEFAULTS.b2);
+
+    const defaultBonus1 = getBonusFallbackParts(DEFAULTS.b1);
+    const defaultBonus2 = getBonusFallbackParts(DEFAULTS.b2);
+
+    const bonus1 = splitBonusParam(
+      bonus1Raw,
+      defaultBonus1.top,
+      defaultBonus1.bottom,
+    );
+    const bonus2 = splitBonusParam(
+      bonus2Raw,
+      defaultBonus2.top,
+      defaultBonus2.bottom,
+    );
+
+    return {
+      params,
+      defaults: DEFAULTS,
+      landingConfigParams: LANDING_CONFIG_PARAMS,
+      lang,
+      brand,
+      offerBase,
+      offerURI: buildOfferUrl(offerBase),
+      trackingTarget,
+      i18nUrl: DEFAULTS.i18nUrl,
+      bonuses: {
+        first: bonus1,
+        second: bonus2,
+      },
+      assets: {
+        bg: `https://alphaclick.click/brands/jackpotcity/bg.avif`,
+        bgFallback: "https://alphaclick.click/brands/default/bg.avif",
+        logo: `https://alphaclick.click/brands/jackpotcity/logo.svg`,
+        holder: "https://alphaclick.click/wheel/steel-wheel-holder.avif",
+        trigger: "https://alphaclick.click/wheel/trigger.avif",
+        frame: "https://alphaclick.click/wheel/wheel-win-frame.avif",
+        modalBg: "https://alphaclick.click/wheel/bg-modal.avif",
+        mask: "https://alphaclick.click/wheel/wheel-mask.avif",
+      },
+    };
+  })();
+
+  async function loadI18n() {
+    return {
+      spin_button: "Tourner",
+      wheel_plus_spins: "TOURS",
+      wheel_retry: "Réessayer",
+      wheel_empty: "Vide",
+      main_title: "Tournez et gagnez !",
+      attempts_label: "Vos essais :",
+      popup_title: "Félicitations !",
+      popup_retry_button: "Réessayer",
+      popup_claim_button: "Obtenir le bonus",
+      popup_win_prefix: "Vous avez gagné :",
+      meta_title: "Jackpotcity | Canada",
+    };
+  }
+
+  function getTextFitTargets(element) {
+    const paragraphs = Array.from(element.querySelectorAll("p"));
+    if (paragraphs.length) return paragraphs;
+
+    let fitTarget = element.querySelector(":scope > .fit-text");
+    if (!fitTarget) {
+      const text = element.textContent.trim();
+      if (!text) return [];
+
+      fitTarget = document.createElement("span");
+      fitTarget.className = "fit-text";
+      fitTarget.textContent = text;
+      fitTarget.style.display = "inline-block";
+
+      element.textContent = "";
+      element.appendChild(fitTarget);
+    }
+
+    return [fitTarget];
+  }
+
+  function resetFontSize(element) {
+    const targets = getTextFitTargets(element);
+    targets.forEach((target) => {
+      target.style.fontSize = "";
+      target.style.transform = "";
+      target.style.transformOrigin = "";
+    });
+  }
+
+  function getMeasuredTextWidth(element) {
+    return element.scrollWidth || element.offsetWidth;
+  }
+
+  function adjustFontSizeToFit(element, c, options = {}) {
+    const targets = getTextFitTargets(element);
+    const baseWidth = element.offsetWidth;
+    const desiredWidth = baseWidth * c;
+    const maxRatio = options.maxRatio ?? (c < 0.5 ? 0.62 : c);
+    const maxWidth = baseWidth * maxRatio;
+    const minFontSize = options.minFontSize ?? 6;
+    const rawMaxFontSize =
+      options.maxFontSize ??
+      (options.maxFontSizeRatio ? baseWidth * options.maxFontSizeRatio : 100);
+    const maxFontSizeLimit = options.maxFontSizeLimit ?? rawMaxFontSize;
+    const maxFontSize = Math.max(
+      minFontSize,
+      Math.min(rawMaxFontSize, maxFontSizeLimit),
+    );
+    const step = options.step ?? 0.5;
+
+    if (!baseWidth || !desiredWidth || !maxWidth) return;
+
+    targets.forEach((target) => {
+      let fontSize = parseFloat(window.getComputedStyle(target).fontSize);
+      if (!fontSize) return;
+
+      target.style.whiteSpace = "nowrap";
+      if (fontSize > maxFontSize) {
+        fontSize = maxFontSize;
+        target.style.fontSize = `${fontSize}px`;
+      }
+
+      while (getMeasuredTextWidth(target) < desiredWidth && fontSize < maxFontSize) {
+        fontSize = Math.min(maxFontSize, fontSize + step);
+        target.style.fontSize = `${fontSize}px`;
+      }
+
+      while (getMeasuredTextWidth(target) > maxWidth && fontSize > minFontSize) {
+        fontSize = Math.max(minFontSize, fontSize - step);
+        target.style.fontSize = `${fontSize}px`;
+      }
+
+      const measuredWidth = getMeasuredTextWidth(target);
+      if (measuredWidth > maxWidth) {
+        target.style.transformOrigin = "center center";
+        target.style.transform = `scaleX(${maxWidth / measuredWidth})`;
+      }
+    });
+  }
+
+  function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+      img.src = url;
+    });
+  }
+
+  async function resolveBackgroundUrl() {
+    try {
+      await preloadImage(CONFIG.assets.bg);
+      return CONFIG.assets.bg;
+    } catch (error) {
+      return CONFIG.assets.bgFallback;
+    }
+  }
+
+  async function applyAssets() {
+    const section = document.querySelector("section.body");
+    const logo = document.querySelector(".logo img");
+    const wheel = document.querySelector(".wheel");
+    const start = document.querySelector(".start");
+    const frameImg = document.querySelector(".frame img");
+
+    if (section) {
+      const bgUrl = await resolveBackgroundUrl();
+      section.style.background = `url("${bgUrl}") no-repeat top left / cover`;
+    }
+
+    if (logo) {
+      logo.src = CONFIG.assets.logo;
+    }
+
+    if (wheel) {
+      wheel.style.background = `url("${CONFIG.assets.holder}") no-repeat top left / contain`;
+    }
+
+    if (start) {
+      start.style.background = `url("${CONFIG.assets.trigger}") no-repeat center / contain`;
+    }
+
+    if (frameImg) {
+      frameImg.src = CONFIG.assets.frame;
+    }
+
+    document.querySelectorAll(".popup-body").forEach((el) => {
+      el.style.background = `url("${CONFIG.assets.modalBg}") no-repeat center / cover`;
+    });
+
+    document.documentElement.style.setProperty(
+      "--wheel-mask-url",
+      `url("${CONFIG.assets.mask}")`,
+    );
+  }
+
+  function applyI18n(t) {
+    const wheelSegs = document.querySelectorAll(".wheel-seg");
+    const startBtnText = document.querySelector(".start p");
+    const offerTitle = document.querySelector(".offer h1");
+    const offerText = document.querySelector(".offer p");
+    const firstPopupTitle = document.querySelector("#first-popup .popup-title");
+    const secondPopupTitle = document.querySelector(
+      "#second-popup .popup-title",
+    );
+    const retryBtn = document.querySelector("#secsp");
+    const claimBtn = document.querySelector(
+      "#d25c38c9-c12e-670a-4afb-5b9f8d6045ee",
+    );
+
+    if (startBtnText) startBtnText.textContent = t.spin_button;
+    if (wheelSegs[0])
+      wheelSegs[0].querySelector(".wheel-small-text").textContent =
+        t.wheel_plus_spins;
+    if (wheelSegs[1])
+      wheelSegs[1].querySelector(".wheel-empty-text").textContent =
+        t.wheel_retry;
+    if (wheelSegs[3])
+      wheelSegs[3].querySelector(".wheel-empty-text").textContent =
+        t.wheel_empty;
+    if (wheelSegs[4])
+      wheelSegs[4].querySelector(".wheel-small-text").textContent =
+        t.wheel_plus_spins;
+    if (wheelSegs[5])
+      wheelSegs[5].querySelector(".wheel-empty-text").textContent =
+        t.wheel_retry;
+    if (wheelSegs[7])
+      wheelSegs[7].querySelector(".wheel-empty-text").textContent =
+        t.wheel_empty;
+
+    if (offerTitle) offerTitle.textContent = t.main_title;
+    if (offerText) {
+      offerText.innerHTML = `${t.attempts_label} <span id="counter">2</span>`;
+    }
+
+    if (firstPopupTitle) firstPopupTitle.textContent = t.popup_title;
+    if (secondPopupTitle) secondPopupTitle.textContent = t.popup_title;
+    if (retryBtn) retryBtn.textContent = t.popup_retry_button;
+    if (claimBtn) claimBtn.textContent = t.popup_claim_button;
+
+    document.title = t.meta_title || document.title;
+  }
+
+  function applyBonuses(t) {
+    const wheelSegs = document.querySelectorAll(".wheel-seg");
+    const b1 = CONFIG.bonuses.first;
+    const b2 = CONFIG.bonuses.second;
+    const bonus1Text = [b1.top, b1.bottom].filter(Boolean).join(" ");
+    const bonus2Text = [b2.top, b2.bottom].filter(Boolean).join(" ");
+
+    function setPopupText(selector, prefix, value) {
+      const popupText = document.querySelector(selector);
+      if (!popupText) return;
+
+      const prefixNode = popupText.querySelector(".popup-text-prefix");
+      const valueNode = popupText.querySelector(".popup-text-value");
+
+      if (prefixNode) {
+        prefixNode.textContent = prefix;
+        prefixNode.hidden = !prefix;
+      }
+
+      if (valueNode) {
+        valueNode.textContent = value;
+        valueNode.hidden = !value;
+      }
+    }
+
+    if (wheelSegs[2]) {
+      wheelSegs[2].querySelector(".wheel-big-text").textContent = b1.top;
+      wheelSegs[2].querySelector(".wheel-small-text").textContent = b1.bottom;
+    }
+
+    if (wheelSegs[6]) {
+      wheelSegs[6].querySelector(".wheel-big-text").textContent = b2.top;
+      wheelSegs[6].querySelector(".wheel-small-text").textContent = b2.bottom;
+    }
+
+    const cutedBonus = bonus1Text
+      .replace(new RegExp(`^${cut}\\s+`, "i"), "")
+      .trim();
+    setPopupText(
+      "#first-popup .popup-text",
+      t.popup_win_prefix + " ",
+      cutedBonus,
+    );
+    setPopupText(
+      "#second-popup .popup-text",
+      [t.popup_win_prefix, cutedBonus].filter(Boolean).join(" "),
+      bonus2Text ? `+ ${bonus2Text}` : "",
+    );
+  }
+
+  async function fitTexts() {
+    await document.fonts.ready;
+
+    const startBtn = document.querySelector(".start");
+    const texts = document.querySelectorAll(".wheel-text-wrapper.adopt");
+    const popupButtons = document.querySelectorAll(".popup-btn.adopt");
+
+    if (startBtn) {
+      resetFontSize(startBtn);
+      adjustFontSizeToFit(startBtn, 0.7);
+    }
+
+    texts.forEach((el) => {
+      resetFontSize(el);
+      adjustFontSizeToFit(el, adjustCfc, {
+        maxRatio: adjustCfc,
+        minFontSize: 7,
+        maxFontSizeRatio: 0.28,
+        maxFontSizeLimit: 32,
+      });
+    });
+
+    popupButtons.forEach((el) => {
+      resetFontSize(el);
+      adjustFontSizeToFit(el, 0.2, { maxRatio: 0.62, minFontSize: 7 });
+    });
+  }
+
+  function initTracking() {
+    const accountId = CONFIG.trackingTarget.split("/")[0];
+
+    if (!accountId) {
+      return;
+    }
+
+    const src =
+      "https://www.googletagmanager.com/gtag/js?id=" +
+      encodeURIComponent(accountId);
+    const exists = Array.from(document.scripts).some(
+      (script) => script.src === src,
+    );
+    if (!exists) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = src;
+      (document.head || document.documentElement).appendChild(script);
+    }
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag =
+      window.gtag ||
+      function () {
+        dataLayer.push(arguments);
+      };
+
+    gtag("js", new Date());
+    gtag("config", accountId);
+  }
+
+  function sendConversions() {
+    if (typeof gtag !== "function") {
+      return;
+    }
+
+    gtag("event", "conversion", {
+      send_to: CONFIG.trackingTarget,
+      transport_type: "beacon",
+      event_timeout: 500,
+    });
+  }
+
+  async function initPage() {
+    initTracking();
+    const [t] = await Promise.all([loadI18n(), applyAssets()]);
+    applyI18n(t);
+    applyBonuses(t);
+    await fitTexts();
+  }
+</script>
+<style>
+  *,
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    border: 0;
+  }
+
+  *,
+  :after,
+  :before {
+    box-sizing: border-box;
+  }
+
+  :active,
+  :focus,
+  a:active,
+  a:focus {
+    outline: 0;
+  }
+
+  aside,
+  footer,
+  header,
+  nav {
+    display: block;
+  }
+
+  section {
+    height: 100vh;
+    position: relative;
+    background-repeat: no-repeat !important;
+    background-position: top left !important;
+    background-size: cover !important;
+    z-index: 10;
+  }
+
+  .embeded-body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+  }
+
+  body {
+    height: 100%;
+  }
+
+  .body {
+    width: 100vw;
+    height: 100dvh;
+    position: relative;
+    z-index: 100;
+  }
+
+  .body,
+  html {
+    font:
+      14px/1 Ubuntu,
+      sans-serif;
+    height: 100%;
+    width: 100%;
+    -ms-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    display: flex;
+    flex-direction: column;
+    color: #000;
+  }
+
+  html {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  @keyframes spinner {
+    0% {
+      transform: rotate(-3deg);
+    }
+
+    50% {
+      transform: rotate(3deg);
+    }
+
+    100% {
+      transform: rotate(-3deg);
+    }
+  }
+
+  @keyframes antispinner {
+    0% {
+      transform: rotate(3deg);
+    }
+
+    50% {
+      transform: rotate(-3deg);
+    }
+
+    100% {
+      transform: rotate(3deg);
+    }
+  }
+
+  .first-spin {
+    animation: 5s firstSpin ease;
+    animation-fill-mode: forwards;
+  }
+
+  .second-spin {
+    animation: 5s secondSpin ease;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes firstSpin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(1350deg);
+    }
+  }
+
+  @keyframes secondSpin {
+    from {
+      transform: rotate(1350deg);
+    }
+
+    to {
+      transform: rotate(2970deg);
+    }
+  }
+
+  #banner .paragraph,
+  #banner p {
+    color: unset !important;
+    font-family: "Ubuntu", sans-serif;
+  }
+
+  .footer::after {
+    display: none;
+  }
+
+  .header::after {
+    display: none;
+  }
+
+  #weebly-footer-signup-container-v3 {
+    visibility: unset !important;
+    display: none !important;
+    height: unset !important;
+    position: unset !important;
+    bottom: 0px !important;
+    left: 0px;
+    right: 0px !important;
+    width: 100% !important;
+    z-index: -1 !important;
+    opacity: 0 !important;
+  }
+
+  #panel-one {
+    height: 0px !important;
+  }
+
+  #panel-two {
+    height: 100vh;
+
+    #banner {
+      height: 100%;
+    }
+  }
+
+  #wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .container {
+    padding: 0 !important;
+  }
+</style>
+<section id="hc-wheel" class="body embeded-body" style="width: 100%; height: 100dvh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: url(&quot;https://alphaclick.click/brands/jackpotcity/bg.avif&quot;) left top / cover no-repeat;">
+  <header style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      z-index: 10;
+      width: 100%;
+      left: 0;
+      top: 0;
+    ">
+    <div class="logo">
+      <style>
+        .logo {
+          padding: 20px 0 0 0;
+          width: 25%;
+          max-width: 240px;
+          height: 170px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .wheel-text-wrapper {
+          width: 100%;
+          height: 100%;
+          padding-top: 5%;
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+
+          p {
+            width: fit-content;
+            text-transform: uppercase;
+          }
+
+          p:not(last-child) {
+            margin-bottom: 6px;
+          }
+        }
+      </style><img src="https://alphaclick.click/brands/jackpotcity/logo.svg" alt="Jackpotcity" data-builder="edit del clone resize" data-selector="img" class="">
+    </div>
+  </header>
+  <div class="main" style="
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: auto;
+    ">
+    <div class="wheel" style="
+        width: 100%;
+        height: auto;
+        background: url(&quot;https://alphaclick.click/wheel/steel-wheel-holder.avif&quot;)
+          no-repeat top left / contain;
+        aspect-ratio: 1 / 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+      <div class="wheel-body animate" style="
+          position: relative;
+          background: black;
+          width: 75%;
+          height: 75%;
+          border-radius: 50%;
+          overflow: hidden;
+        ">
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-big-text wheel-text" style="color: rgb(251, 216, 77) !important; margin: 0px 0px 6px !important; white-space: nowrap; font-size: 32px;">
+              +2
+            </p>
+            <p class="wheel-small-text wheel-text" style="color: rgb(255, 255, 255) !important; margin: 0px !important; white-space: nowrap; font-size: 11.5px;">TOURS</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-empty-text wheel-text" style="color: rgb(124, 204, 51) !important; margin: 0px 0px 6px !important; white-space: nowrap; font-size: 12px;">Réessayer</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-big-text wheel-text" style="color: rgb(251, 216, 77) !important; margin: 0px 0px 6px !important; white-space: nowrap; font-size: 25.5px;">100 TG</p>
+            <p class="wheel-small-text wheel-text" style="color: rgb(255, 255, 255) !important; margin: 0px !important; white-space: nowrap; font-size: 28px;"></p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-empty-text wheel-text" style="color: rgb(124, 204, 51) !important; margin: 0px !important; white-space: nowrap; font-size: 32px;">Vide</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-big-text wheel-text" style="color: rgb(251, 216, 77) !important; margin: 0px 0px 6px !important; white-space: nowrap; font-size: 32px;">
+              +2
+            </p>
+            <p class="wheel-small-text wheel-text" style="color: rgb(255, 255, 255) !important; margin: 0px !important; white-space: nowrap; font-size: 11.5px;">TOURS</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-empty-text wheel-text" style="color: rgb(124, 204, 51) !important; margin: 0px !important; white-space: nowrap; font-size: 12px;">Réessayer</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-big-text wheel-text" style="color: rgb(251, 216, 77) !important; margin: 0px 0px 6px !important; white-space: nowrap; font-size: 32px;">50</p>
+            <p class="wheel-small-text wheel-text" style="color: rgb(255, 255, 255) !important; margin: 0px !important; white-space: nowrap; font-size: 32px;">TG</p>
+          </div>
+        </div>
+        <div class="wheel-seg">
+          <div class="wheel-text-wrapper adopt">
+            <p class="wheel-empty-text wheel-text" style="color: rgb(124, 204, 51) !important; margin: 0px !important; white-space: nowrap; font-size: 32px;">Vide</p>
+          </div>
+        </div>
+        <style>
+          .wheel-text {
+            display: block;
+          }
+
+          .wheel-seg {
+            padding-top: 10px;
+            height: 51%;
+            width: 41.3%;
+            position: absolute;
+            -webkit-clip-path: polygon(100% 0, 50% 100%, 0 0);
+            clip-path: polygon(100% 0, 50% 100%, 0 0);
+            translate: -50% 0;
+            transform-origin: bottom;
+            text-align: center;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            left: 50%;
+          }
+
+          .wheel-seg:nth-child(odd) {
+            background: linear-gradient(0deg,
+                rgb(0, 169, 0) 23%,
+                rgb(0, 110, 0) 74%);
+          }
+
+          .wheel-seg:nth-child(even) {
+            background: linear-gradient(0deg,
+                rgb(0, 169, 0) 23%,
+                rgb(1, 87, 1) 74%);
+          }
+
+          .wheel-seg:nth-child(1) {
+            left: 50%;
+          }
+
+          .wheel-seg:nth-child(2) {
+            rotate: 45deg;
+          }
+
+          .wheel-seg:nth-child(3) {
+            rotate: 90deg;
+          }
+
+          .wheel-seg:nth-child(4) {
+            rotate: 135deg;
+          }
+
+          .wheel-seg:nth-child(5) {
+            rotate: 180deg;
+          }
+
+          .wheel-seg:nth-child(6) {
+            rotate: 225deg;
+          }
+
+          .wheel-seg:nth-child(7) {
+            rotate: 270deg;
+          }
+
+          .wheel-seg:nth-child(8) {
+            rotate: 315deg;
+          }
+        </style>
+      </div>
+      <button class="start" style="
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          background: url(&quot;https://alphaclick.click/wheel/trigger.avif&quot;)
+            no-repeat center/contain;
+          width: 25%;
+          height: 25%;
+          z-index: 10;
+          color: #612901;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-transform: uppercase;
+        ">
+        <p style="width: fit-content; padding: 0px; margin: 0px; color: rgb(97, 41, 1); white-space: nowrap; font-size: 26.5px;">Tourner</p>
+      </button>
+      <div class="frame">
+        <img src="https://alphaclick.click/wheel/wheel-win-frame.avif" alt="" data-builder="edit del clone resize" data-selector="img">
+      </div>
+      <style>
+        .frame {
+          position: absolute;
+          z-index: 5;
+          top: -1%;
+          left: 50%;
+          translate: -50% 0;
+          height: 60%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .popup {
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          background: rgba(0, 0, 0, 0.4);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.2s ease;
+          opacity: 0;
+          pointer-events: none;
+
+          .popup-body {
+            background: url("https://alphaclick.click/wheel/bg-modal.avif") no-repeat center / cover;
+            border: 2px solid #fbd84d;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+          }
+
+          .popup-btn {
+            width: 100%;
+            color: #612901;
+            border-bottom: 4px solid #7e5205;
+            background: rgb(224, 138, 13);
+            background: linear-gradient(180deg,
+                rgb(224, 138, 13) 0%,
+                rgb(255, 196, 70) 40%,
+                rgb(255, 196, 70) 60%,
+                rgb(224, 138, 13) 100%);
+            display: block;
+            border-radius: 16px;
+            font-size: 25px;
+            padding: 24px 33px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-left: auto;
+            margin-right: auto;
+            overflow: hidden;
+            position: relative;
+            text-decoration: none;
+            text-align: center;
+          }
+
+          .popup-text {
+            color: #fff !important;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: 500;
+          }
+
+          .popup-text-value {
+            white-space: pre-line;
+          }
+        }
+
+        #second-popup {
+          .popup-text-prefix {
+            display: block;
+            margin-bottom: 10px;
+          }
+
+          .popup-text-value {
+            display: block;
+          }
+        }
+
+        .active-popup {
+          opacity: 1;
+          pointer-events: all;
+        }
+      </style>
+    </div>
+  </div>
+  <div class="offer" style="
+      padding: 15px;
+      border-radius: 15px;
+      background-color: rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 10;
+    ">
+    <h1 style="
+        color: #fbd84d !important;
+        text-align: center;
+        margin: 0 0 10px 0;
+        font-size: 30px;
+      ">Tournez et gagnez !</h1>
+    <p style="color: #fff !important; text-align: center; font-size: 22px">Vos essais : <span id="counter">2</span></p>
+  </div>
+  <div id="first-popup" class="popup">
+    <div class="popup-body" style="background: url(&quot;https://alphaclick.click/wheel/bg-modal.avif&quot;) center center / cover no-repeat;">
+      <h2 class="popup-title" style="
+          color: #fbd84d !important;
+          text-align: center;
+          margin-bottom: 9px;
+          font-size: 30px;
+          margin-bottom: 20px;
+        ">Félicitations !</h2>
+      <p class="popup-text">
+        <span class="popup-text-prefix">Vous avez gagné : </span>
+        <span class="popup-text-value">100 TG</span>
+      </p>
+      <a href="#" id="secsp" class="popup-btn adopt" data-frame-id="_xvlrso838"><span class="fit-text" style="display: inline-block; white-space: nowrap;">Réessayer</span></a>
+    </div>
+  </div>
+  <div id="second-popup" class="popup">
+    <div class="popup-body" style="background: url(&quot;https://alphaclick.click/wheel/bg-modal.avif&quot;) center center / cover no-repeat;">
+      <h2 class="popup-title" style="
+          color: #fbd84d !important;
+          text-align: center;
+          margin-bottom: 9px;
+          font-size: 30px;
+          margin-bottom: 20px;
+        ">Félicitations !</h2>
+      <p class="popup-text">
+        <span class="popup-text-prefix">Vous avez gagné : 100 TG</span>
+        <span class="popup-text-value">+ 50 TG</span>
+      </p>
+      <a href="#" id="d25c38c9-c12e-670a-4afb-5b9f8d6045ee" class="popup-btn adopt" data-frame-id="_xvlrso838"><span class="fit-text" style="display: inline-block; white-space: nowrap;">Obtenir le bonus</span></a>
+      <script type="text/javascript">
+        document
+          .querySelector("#d25c38c9-c12e-670a-4afb-5b9f8d6045ee")
+          .addEventListener("click", function (e) {
+            e.preventDefault();
+            try {
+              sendConversions();
+            } catch (e) { }
+            window.location.href = CONFIG.offerURI;
+          });
+      </script>
+    </div>
+  </div>
+  <style>
+    .animate {
+      animation: 2s spinner ease-in-out infinite;
+    }
+
+    .wheel::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      display: block;
+      width: 75%;
+      height: 75%;
+      background: url("https://alphaclick.click/wheel/wheel-mask.avif") no-repeat center / contain;
+    }
+
+    @media (min-width: 500px) {
+      .wheel {
+        max-width: 700px;
+      }
+    }
+
+    .powered-by-badge {
+      display: none !important;
+    }
+  </style>
+  <script type="text/javascript">
+    (function bootWheelControls() {
+      const startBtn = document.querySelector(".start");
+      const wheelBody = document.querySelector(".wheel-body");
+      const firstPopup = document.querySelector("#first-popup");
+      const secondPopup = document.querySelector("#second-popup");
+      const secsp = document.querySelector("#secsp");
+      let counter = document.querySelector("#counter");
+
+      // Kartra may execute a code block before its markup is attached.
+      if (!startBtn || !wheelBody || !firstPopup || !secondPopup || !secsp) {
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", bootWheelControls, { once: true });
+        } else {
+          window.setTimeout(bootWheelControls, 0);
+        }
+        return;
+      }
+
+      const storageKey = `wheel-state:${CONFIG.lang}:${CONFIG.brand}`;
+      function readSavedState() {
+        try { return JSON.parse(localStorage.getItem(storageKey) || "null"); } catch (e) { return null; }
+      }
+      function saveFinishedState() {
+        const prefixNode = secondPopup.querySelector(".popup-text-prefix");
+        const valueNode = secondPopup.querySelector(".popup-text-value");
+        try {
+          localStorage.setItem(storageKey, JSON.stringify({
+            finished: true, bonus1: CONFIG.bonuses.first, bonus2: CONFIG.bonuses.second,
+            popupPrefix: prefixNode ? prefixNode.textContent : "",
+            popupValue: valueNode ? valueNode.textContent : "",
+          }));
+        } catch (e) {}
+      }
+      function applySavedPopupText(state) {
+        const prefixNode = secondPopup.querySelector(".popup-text-prefix");
+        const valueNode = secondPopup.querySelector(".popup-text-value");
+        if (prefixNode && typeof state.popupPrefix === "string") { prefixNode.textContent = state.popupPrefix; prefixNode.hidden = !state.popupPrefix; }
+        if (valueNode && typeof state.popupValue === "string") { valueNode.textContent = state.popupValue; valueNode.hidden = !state.popupValue; }
+      }
+      function showSavedWinState() {
+        const state = readSavedState();
+        if (!state?.finished) return;
+        wheelBody.classList.remove("animate", "first-spin");
+        wheelBody.classList.add("second-spin");
+        firstPopup.classList.remove("active-popup");
+        secondPopup.classList.add("active-popup");
+        if (counter) counter.textContent = "0";
+        applySavedPopupText(state);
+        fitTexts().catch(() => {});
+      }
+
+      initPage().then(() => { counter = document.querySelector("#counter"); showSavedWinState(); });
+      startBtn.addEventListener("click", function () {
+        if (readSavedState()?.finished) { showSavedWinState(); return; }
+        startBtn.disabled = true;
+        wheelBody.classList.remove("animate");
+        wheelBody.classList.add("first-spin");
+        if (counter) counter.textContent = "1";
+        window.setTimeout(function () { firstPopup.classList.add("active-popup"); startBtn.disabled = false; }, 6000);
+      });
+      secsp.addEventListener("click", function (e) {
+        e.preventDefault();
+        firstPopup.classList.remove("active-popup");
+        wheelBody.classList.add("second-spin");
+        if (counter) counter.textContent = "0";
+        window.setTimeout(function () { saveFinishedState(); secondPopup.classList.add("active-popup"); }, 6000);
+      });
+    })();
+  </script>
+</section>
+<style>
+  /* Kartra sometimes layers a generated frame above the original button. */
+  #hc-wheel::after,
+  #hc-wheel .wheel::after,
+  #hc-wheel .frame {
+    pointer-events: none !important;
+  }
+
+  #hc-wheel .main,
+  #hc-wheel .wheel,
+  #hc-wheel .start {
+    pointer-events: auto !important;
+  }
+
+  #hc-wheel .start {
+    position: absolute !important;
+    z-index: 25 !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+  }
+</style>
+<style>
+  .page-content template {
+    display: block !important;
+  }
+</style>
+<style>
+#hc-wheel{width:100vw!important;height:100vh!important;height:100dvh!important;min-height:100svh!important;margin:0!important;padding:0!important;position:relative!important;isolation:isolate!important;overflow:hidden!important}
+#hc-wheel>header{position:absolute!important}#hc-wheel .start{z-index:2147483646!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation!important}#hc-wheel .start *{pointer-events:none!important}#hc-wheel .frame,#hc-wheel .wheel::after,#hc-wheel .wheel-body{pointer-events:none!important}
+</style>
+<script>
+(function installBack4WheelFix(){if(window.__back4WheelFixInstalled)return;window.__back4WheelFixInstalled=true;
+function q(s){return document.querySelector(s)}function inside(el,e){if(!el)return false;if(e.target===el||el.contains(e.target))return true;var r=el.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom}
+function key(){try{return "wheel-state:"+CONFIG.lang+":"+CONFIG.brand}catch(e){return "wheel-state:back4"}}function saved(){try{return JSON.parse(localStorage.getItem(key())||"null")}catch(e){return null}}function fit(){try{if(typeof fitTexts==="function")fitTexts().catch(function(){})}catch(e){}}
+function showSaved(){var w=q("#hc-wheel .wheel-body"),p1=q("#first-popup"),p2=q("#second-popup"),c=q("#counter"),s=saved();if(!s||!s.finished||!w||!p2)return false;w.classList.remove("animate","first-spin");w.classList.add("second-spin");if(p1)p1.classList.remove("active-popup");p2.classList.add("active-popup");if(c)c.textContent="0";fit();return true}
+function first(btn){var w=q("#hc-wheel .wheel-body"),p=q("#first-popup"),c=q("#counter");if(!w||!p||btn.dataset.forceSpinning==="1")return;if(showSaved())return;btn.dataset.forceSpinning="1";btn.disabled=true;w.classList.remove("animate","second-spin");void w.offsetWidth;w.classList.add("first-spin");if(c)c.textContent="1";setTimeout(function(){p.classList.add("active-popup");btn.disabled=false;btn.dataset.forceSpinning="0";fit()},6000)}
+function second(){var w=q("#hc-wheel .wheel-body"),p1=q("#first-popup"),p2=q("#second-popup"),c=q("#counter");if(!w||!p1||!p2||p1.dataset.forceSpinning==="1")return;p1.dataset.forceSpinning="1";p1.classList.remove("active-popup");w.classList.remove("first-spin");void w.offsetWidth;w.classList.add("second-spin");if(c)c.textContent="0";setTimeout(function(){var pre=p2.querySelector(".popup-text-prefix"),val=p2.querySelector(".popup-text-value");try{localStorage.setItem(key(),JSON.stringify({finished:true,popupPrefix:pre?pre.textContent:"",popupValue:val?val.textContent:""}))}catch(e){}p2.classList.add("active-popup");p1.dataset.forceSpinning="0";fit()},6000)}
+document.addEventListener("click",function(e){var start=q("#hc-wheel .start"),retry=q("#first-popup #secsp");if(inside(start,e)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();first(start);return}if(inside(retry,e)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();second()}},true);
+function watch(){if(q("#hc-wheel .start")&&q("#hc-wheel .wheel-body"))return showSaved();var observer=new MutationObserver(function(){if(q("#hc-wheel .start")&&q("#hc-wheel .wheel-body")){observer.disconnect();showSaved()}});observer.observe(document.documentElement,{childList:true,subtree:true})}watch()})();
+</script></body></html>

@@ -1,0 +1,6 @@
+.DS_Store
+dist/
+*.zip
+BACK4_AI_PROMPT_*.txt
+jackpot-best_back4app_SITE_ONLY/
+assets/*.png
