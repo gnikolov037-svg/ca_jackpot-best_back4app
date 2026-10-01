@@ -1,4 +1,4 @@
-<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jackpotcity | Canada</title><style>html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#050505}*{box-sizing:border-box}</style></head><body><!-- Jackpotcity · Back4App wheel · /city -->
+<!doctype html><html lang="fr-CA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jackpotcity | Canada</title><style>html,body{width:100%;min-height:100%;margin:0;padding:0;overflow-x:hidden;background:#050505}body{overflow-y:auto}*{box-sizing:border-box}</style></head><body><!-- Jackpotcity · Back4App wheel · /city -->
 <style>
   .page.container-fluid {
     padding: 0!important;
@@ -1168,4 +1168,27 @@ function first(btn){var w=q("#hc-wheel .wheel-body"),p=q("#first-popup"),c=q("#c
 function second(){var w=q("#hc-wheel .wheel-body"),p1=q("#first-popup"),p2=q("#second-popup"),c=q("#counter");if(!w||!p1||!p2||p1.dataset.forceSpinning==="1")return;p1.dataset.forceSpinning="1";p1.classList.remove("active-popup");w.classList.remove("first-spin");void w.offsetWidth;w.classList.add("second-spin");if(c)c.textContent="0";setTimeout(function(){var pre=p2.querySelector(".popup-text-prefix"),val=p2.querySelector(".popup-text-value");try{localStorage.setItem(key(),JSON.stringify({finished:true,popupPrefix:pre?pre.textContent:"",popupValue:val?val.textContent:""}))}catch(e){}p2.classList.add("active-popup");p1.dataset.forceSpinning="0";fit()},6000)}
 document.addEventListener("click",function(e){var start=q("#hc-wheel .start"),retry=q("#first-popup #secsp");if(inside(start,e)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();first(start);return}if(inside(retry,e)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();second()}},true);
 function watch(){if(q("#hc-wheel .start")&&q("#hc-wheel .wheel-body"))return showSaved();var observer=new MutationObserver(function(){if(q("#hc-wheel .start")&&q("#hc-wheel .wheel-body")){observer.disconnect();showSaved()}});observer.observe(document.documentElement,{childList:true,subtree:true})}watch()})();
+</script>
+<iframe id="landing-below-wheel" src="../index.html" title="Jackpotcity — page principale" scrolling="no" style="display:block;width:100%;min-height:100vh;border:0;background:#f4f1ea"></iframe>
+<script>
+(function sizeLandingBelowWheel(){
+  var frame=document.getElementById("landing-below-wheel");
+  if(!frame)return;
+  function sync(){
+    try{
+      var doc=frame.contentDocument;
+      if(!doc)return;
+      doc.querySelectorAll('a[href="/city"],a[href="/city/"]').forEach(function(link){link.target="_top"});
+      var height=Math.max(doc.documentElement.scrollHeight,doc.body?doc.body.scrollHeight:0,window.innerHeight);
+      frame.style.height=height+"px";
+      if("ResizeObserver" in window&&!frame.__landingResizeObserver){
+        frame.__landingResizeObserver=new ResizeObserver(sync);
+        frame.__landingResizeObserver.observe(doc.documentElement);
+        if(doc.body)frame.__landingResizeObserver.observe(doc.body);
+      }
+    }catch(error){frame.style.height="4200px"}
+  }
+  frame.addEventListener("load",sync);
+  window.addEventListener("resize",sync);
+})();
 </script></body></html>
