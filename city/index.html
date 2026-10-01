@@ -1130,6 +1130,13 @@
   </script>
 </section>
 <style>
+/* Keep the brand mark centred in the available space above the wheel on phones. */
+#hc-wheel > header { position:absolute!important; inset:0 0 auto 0!important; top:clamp(18px,4.5dvh,62px)!important; height:clamp(116px,18dvh,210px)!important; z-index:20!important; pointer-events:none!important; }
+#hc-wheel > header .logo { display:flex!important; align-items:center!important; justify-content:center!important; padding:0!important; width:clamp(220px,48vw,420px)!important; max-width:64vw!important; height:100%!important; }
+#hc-wheel > header .logo img { width:100%!important; height:100%!important; object-fit:contain!important; }
+@media (max-width:520px){#hc-wheel > header{top:clamp(14px,3.8dvh,34px)!important;height:clamp(118px,17dvh,160px)!important}#hc-wheel > header .logo{width:min(62vw,315px)!important;max-width:62vw!important}}
+</style>
+<style>
   /* Kartra sometimes layers a generated frame above the original button. */
   #hc-wheel::after,
   #hc-wheel .wheel::after,
